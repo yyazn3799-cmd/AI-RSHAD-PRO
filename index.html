@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101426">
+  <meta name="description" content="AI RSHAD PRO — استوديو الصور والفيديو بالذكاء الاصطناعي">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <title>AI RSHAD PRO</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">R</div><div><b>AI RSHAD PRO</b><small>استوديو الإبداع بالذكاء الاصطناعي</small></div></div>
+  <button class="icon-btn" id="installBtn" hidden>＋ تثبيت التطبيق</button>
+</header>
+<main>
+  <section class="hero">
+    <div class="eyebrow">مساحتك الإبداعية الخاصة</div>
+    <h1>حوّل أفكارك إلى <span>صور ومشاهد</span></h1>
+    <p>اكتب فكرتك، اختر الأداة، وابدأ بصناعة محتواك. احفظ أعمالك على جهازك وطوّر الاستوديو كما تريد.</p>
+    <div class="hero-tags"><span>✦ صور</span><span>▶ فيديو</span><span>◈ تحريك الصور</span><span>◎ مكتبتك الخاصة</span></div>
+  </section>
+
+  <nav class="tabs" aria-label="الأقسام">
+    <button class="tab active" data-tab="image">▧ إنشاء صورة</button>
+    <button class="tab" data-tab="video">▶ إنشاء فيديو</button>
+    <button class="tab" data-tab="animate">◉ تحريك صورة</button>
+    <button class="tab" data-tab="library">▤ أعمالي</button>
+  </nav>
+
+  <section class="workspace">
+    <div class="panel active" id="panel-image">
+      <div class="section-head"><div><h2>استوديو الصور</h2><p>صف الصورة التي تتخيلها بالتفصيل.</p></div><span class="badge">IMAGE STUDIO</span></div>
+      <label for="imagePrompt">وصف الصورة</label>
+      <textarea id="imagePrompt" rows="4" placeholder="مثال: مشهد سينمائي واقعي لمدينة قديمة عند الغروب، إضاءة ذهبية وتفاصيل فائقة..."></textarea>
+      <div class="grid two">
+        <div><label for="imageStyle">النمط</label><select id="imageStyle"><option value="photorealistic">واقعي جداً</option><option value="cinematic">سينمائي</option><option value="anime">أنمي</option><option value="illustration">رسم توضيحي</option><option value="fantasy">خيالي</option></select></div>
+        <div><label for="imageRatio">الأبعاد</label><select id="imageRatio"><option value="1024x1024">مربع 1:1</option><option value="1024x1536">عمودي 2:3</option><option value="1536x1024">أفقي 3:2</option></select></div>
+      </div>
+      <button class="primary" id="makeImage">✦ توليد الصورة</button>
+      <div class="notice">التوليد الفعلي يحتاج إلى مزوّد نماذج متاح. زر التوليد يحاول استخدام خدمة صور تجريبية عامة؛ توفرها وسرعتها غير مضمونين وقد تتغير شروطها.</div>
+      <div class="result" id="imageResult"><div class="empty">ستظهر الصورة هنا بعد التوليد.</div></div>
+    </div>
+
+    <div class="panel" id="panel-video">
+      <div class="section-head"><div><h2>استوديو الفيديو</h2><p>جهّز وصف المشهد الذي تريد إنتاجه.</p></div><span class="badge">VIDEO STUDIO</span></div>
+      <label for="videoPrompt">وصف الفيديو</label>
+      <textarea id="videoPrompt" rows="4" placeholder="مثال: لقطة سينمائية لشخص يسير في شارع ممطر، حركة كاميرا بطيئة وانعكاسات أضواء..."></textarea>
+      <div class="grid two">
+        <div><label for="videoDuration">المدة المطلوبة</label><select id="videoDuration"><option>5 ثوانٍ</option><option>10 ثوانٍ</option><option>15 ثانية</option></select></div>
+        <div><label for="videoRatio">اتجاه الفيديو</label><select id="videoRatio"><option>عمودي 9:16</option><option>أفقي 16:9</option><option>مربع 1:1</option></select></div>
+      </div>
+      <button class="primary" id="makeVideo">▶ إعداد طلب الفيديو</button>
+      <div class="notice">هذه النسخة تجهّز وصف الفيديو وتحفظه. لا يوجد حالياً محرك فيديو مربوط؛ توليد الفيديو يتطلب خادماً أو مزوّد API، وغالباً لا يتوفر مجاناً بلا حدود.</div>
+      <div class="result" id="videoResult"><div class="empty">سيظهر هنا ملخص طلب الفيديو وخيارات الربط.</div></div>
+    </div>
+
+    <div class="panel" id="panel-animate">
+      <div class="section-head"><div><h2>تحريك صورة</h2><p>اختر صورة واكتب الحركة التي تريدها.</p></div><span class="badge">IMAGE TO VIDEO</span></div>
+      <label for="photoFile">اختر صورة من هاتفك</label>
+      <input id="photoFile" type="file" accept="image/*">
+      <div class="preview" id="photoPreview"><span>معاينة الصورة المختارة</span></div>
+      <label for="motionPrompt">وصف الحركة</label>
+      <textarea id="motionPrompt" rows="3" placeholder="مثال: حركة كاميرا اقتراب خفيفة، تحريك الشعر والملابس مع نسيم لطيف..."></textarea>
+      <button class="primary" id="prepareMotion">◉ تجهيز مشهد التحريك</button>
+      <div class="notice">تحويل الصورة إلى فيديو يحتاج محرك image-to-video خارجي. يمكنك تجهيز الوصف هنا ثم ربط مزوّد مناسب عند توفره.</div>
+      <div id="motionResult" class="result"><div class="empty">ستظهر تفاصيل المشهد هنا.</div></div>
+    </div>
+
+    <div class="panel" id="panel-library">
+      <div class="section-head"><div><h2>مكتبتي</h2><p>الطلبات والصور المحفوظة على هذا الجهاز.</p></div><span class="badge">MY WORK</span></div>
+      <div id="libraryList" class="library-list"><div class="empty">لم تحفظ أي أعمال بعد.</div></div>
+      <button class="secondary" id="clearLibrary">مسح سجل الطلبات</button>
+    </div>
+  </section>
+
+  <section class="features">
+    <h2>مصمم ليكبر معك</h2>
+    <div class="feature-grid">
+      <article><b>01</b><h3>ملكية ومرونة</h3><p>ملفات المصدر مفتوحة لك لتعديل الواجهة وإضافة أدوات جديدة.</p></article>
+      <article><b>02</b><h3>خصوصية محلية</h3><p>سجل الطلبات يُحفظ في متصفح جهازك، ولا نضيف حساباً أو قاعدة بيانات خارجية.</p></article>
+      <article><b>03</b><h3>قابل للتوسعة</h3><p>يمكن ربط خدمات توليد الصور والفيديو لاحقاً من خلال خادم آمن.</p></article>
+    </div>
+  </section>
+</main>
+<footer>AI RSHAD PRO <span>نسخة أولية قابلة للتطوير</span></footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

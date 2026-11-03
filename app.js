@@ -1,4 +1,3 @@
-
 const $ = s => document.querySelector(s);
 
 const tabs = [...document.querySelectorAll('.tab')];
@@ -49,10 +48,129 @@ function esc(s) {
 }
 
 /* =========================
-   توليد الصور
+   AI HORDE IMAGE ENGINE
+========================= */
+
+const HORDE_API = 'https://aihorde.net/api/v2';
+
+const HORDE_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': '0000000000',
+  'Client-Agent': 'AI-RSHAD-PRO:1.0:github.com/yyazn3799-cmd/AI-RSHAD-PRO'
+};
+
+const sleep = ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
+
+async function hordeFetch(url, options = {}) {
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...HORDE_HEADERS,
+      ...(options.headers || {})
+    }
+  });
+
+  let data;
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('استجابة غير مفهومة من محرك الصور.');
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || 'تعذر الاتصال بمحرك الصور.');
+  }
+
+  return data;
+}
+
+async function generateHordeImage(prompt, width, height, progress) {
+
+  progress('إرسال طلب الصورة إلى محرك الذكاء الاصطناعي...');
+
+  const request = await hordeFetch(
+    HORDE_API + '/generate/async',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        prompt: prompt,
+        params: {
+          width: width,
+          height: height,
+          steps: 20,
+          n: 1,
+          cfg_scale: 7.5,
+          sampler_name: 'k_euler',
+          karras: true
+        },
+        nsfw: false,
+        censor_nsfw: true,
+        r2: true,
+        allow_downgrade: true
+      })
+    }
+  );
+
+  if (!request.id) {
+    throw new Error('لم يتم استلام رقم طلب التوليد.');
+  }
+
+  const requestId = request.id;
+
+  progress('تم إرسال الطلب. ننتظر توفر جهاز لتوليد الصورة...');
+
+  for (let i = 0; i < 120; i++) {
+
+    await sleep(5000);
+
+    const status = await hordeFetch(
+      HORDE_API + '/generate/check/' + requestId
+    );
+
+    if (status.faulted) {
+      throw new Error('تعذر إكمال التوليد. جرّب طلباً جديداً.');
+    }
+
+    if (status.done) {
+
+      progress('اكتمل التوليد. جارٍ تحميل الصورة...');
+
+      const result = await hordeFetch(
+        HORDE_API + '/generate/status/' + requestId
+      );
+
+      if (!result.generations || !result.generations.length) {
+        throw new Error('لم يستلم التطبيق صورة من المحرك.');
+      }
+
+      return result.generations[0].img;
+    }
+
+    const waiting = status.waiting || 0;
+    const processing = status.processing || 0;
+
+    progress(
+      'جارٍ توليد الصورة... الانتظار: ' +
+      waiting +
+      ' · قيد المعالجة: ' +
+      processing
+    );
+  }
+
+  throw new Error(
+    'استغرق التوليد وقتاً طويلاً. يمكنك المحاولة مرة أخرى لاحقاً.'
+  );
+}
+
+/* =========================
+   IMAGE GENERATION BUTTON
 ========================= */
 
 $('#makeImage').addEventListener('click', async () => {
+
   const prompt = $('#imagePrompt').value.trim();
 
   if (!prompt) {
@@ -63,94 +181,117 @@ $('#makeImage').addEventListener('click', async () => {
   const btn = $('#makeImage');
   const box = $('#imageResult');
 
-  btn.disabled = true;
-  btn.textContent = 'جارٍ توليد الصورة...';
-
-  box.innerHTML =
-    '<div class="empty">جارٍ الاتصال بمحرك الصور المجاني، يرجى الانتظار...</div>';
-
   const style = $('#imageStyle').value;
   const ratio = $('#imageRatio').value;
 
-  const dimensions = ratio.split('x');
-  const width = Number(dimensions[0]) || 1024;
-  const height = Number(dimensions[1]) || 1024;
+  const [width, height] = ratio.split('x').map(Number);
 
   const fullPrompt =
-    prompt + ', ' + style + ', highly detailed, realistic, professional quality';
+    prompt +
+    ', ' + style +
+    ', highly detailed, professional quality';
 
-  const seed = Math.floor(Math.random() * 999999);
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التوليد...';
 
-  const url =
-    'https://image.pollinations.ai/prompt/' +
-    encodeURIComponent(fullPrompt) +
-    '?width=' + width +
-    '&height=' + height +
-    '&seed=' + seed +
-    '&nologo=true';
+  box.innerHTML =
+    '<div class="empty">جارٍ الاتصال بمحرك AI Horde...</div>';
 
-  const img = new Image();
+  try {
 
-  img.alt = 'الصورة الناتجة من AI RSHAD PRO';
+    const imageUrl = await generateHordeImage(
+      fullPrompt,
+      width,
+      height,
+      message => {
+        box.innerHTML =
+          '<div class="empty">' + esc(message) + '</div>';
+      }
+    );
 
-  img.onload = () => {
-    box.innerHTML = '';
+    const img = new Image();
+
+    img.alt = 'الصورة الناتجة';
 
     img.style.maxWidth = '100%';
     img.style.height = 'auto';
     img.style.borderRadius = '12px';
 
-    box.appendChild(img);
+    img.onload = () => {
 
-    const actions = document.createElement('div');
-    actions.className = 'actions';
+      box.innerHTML = '';
+      box.appendChild(img);
 
-    actions.innerHTML = `
-      <a href="${url}" download="AI-RSHAD-PRO.jpg">
-        حفظ الصورة
-      </a>
-      <button type="button" id="saveImagePrompt">
-        حفظ الطلب في مكتبتي
-      </button>
-    `;
+      const actions = document.createElement('div');
 
-    box.appendChild(actions);
+      actions.className = 'actions';
 
-    $('#saveImagePrompt').onclick = () => {
-      saveWork({
-        type: 'صورة',
-        prompt: prompt,
-        details: style
-      });
+      const openLink = document.createElement('a');
 
-      toast('تم حفظ الطلب في مكتبتك.');
+      openLink.href = imageUrl;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener';
+      openLink.textContent = 'فتح الصورة وحفظها';
+
+      const saveButton = document.createElement('button');
+
+      saveButton.textContent = 'حفظ الطلب في مكتبتي';
+
+      saveButton.onclick = () => {
+
+        saveWork({
+          type: 'صورة مولدة',
+          prompt: prompt,
+          details: style
+        });
+
+        toast('تم حفظ الطلب في مكتبتك.');
+      };
+
+      actions.append(openLink, saveButton);
+      box.appendChild(actions);
+
+      btn.disabled = false;
+      btn.textContent = '✦ توليد الصورة';
+
+      toast('تم توليد الصورة بنجاح!');
     };
 
+    img.onerror = () => {
+
+      box.innerHTML =
+        '<div class="empty">تم التوليد لكن تعذر عرض الصورة. افتح الرابط وحاول مرة أخرى.</div>';
+
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.target = '_blank';
+      link.textContent = 'فتح الصورة';
+
+      box.appendChild(link);
+
+      btn.disabled = false;
+      btn.textContent = '✦ توليد الصورة';
+    };
+
+    img.src = imageUrl;
+
+  } catch (error) {
+
+    box.innerHTML =
+      '<div class="empty">' +
+      esc(error.message) +
+      '</div>';
+
+    toast(error.message);
+
     btn.disabled = false;
     btn.textContent = '✦ توليد الصورة';
-  };
-
-  img.onerror = () => {
-    box.innerHTML = `
-      <div class="empty">
-        تعذر توليد الصورة حالياً.
-        قد تكون الخدمة مشغولة أو غير متاحة.
-        حاول مرة أخرى لاحقاً.
-      </div>
-    `;
-
-    btn.disabled = false;
-    btn.textContent = '✦ توليد الصورة';
-
-    toast('تعذر الاتصال بمحرك الصور.');
-  };
-
-  img.src = url;
+  }
 });
 
 
 /* =========================
-   تجهيز الفيديو
+   VIDEO REQUESTS
 ========================= */
 
 $('#makeVideo').addEventListener('click', () => {
@@ -176,14 +317,11 @@ $('#makeVideo').addEventListener('click', () => {
       <b>تم تجهيز طلب الفيديو</b>
       <p>${esc(prompt)}</p>
       <small>${esc(duration)} · ${esc(ratio)}</small>
-
       <div class="actions">
         <button id="copyVideo">نسخ الوصف</button>
       </div>
-
       <p class="empty">
-        تم تجهيز الوصف وحفظه.
-        يلزم ربط محرك توليد فيديو فعلي لإنشاء الفيديو.
+        يلزم ربط محرك فيديو فعلي لإنتاج الملف.
       </p>
     </div>
   `;
@@ -197,12 +335,12 @@ $('#makeVideo').addEventListener('click', () => {
     }
   };
 
-  toast('تم حفظ طلب الفيديو في مكتبتك.');
+  toast('تم حفظ طلب الفيديو.');
 });
 
 
 /* =========================
-   اختيار الصور من الهاتف
+   PHOTO SELECTION
 ========================= */
 
 let selectedPhoto = null;
@@ -214,7 +352,7 @@ $('#photoFile').addEventListener('change', e => {
   if (!f) return;
 
   if (!f.type.startsWith('image/')) {
-    toast('الرجاء اختيار صورة.');
+    toast('اختر صورة صحيحة.');
     return;
   }
 
@@ -228,7 +366,7 @@ $('#photoFile').addEventListener('change', e => {
 
 
 /* =========================
-   تحريك الصور
+   IMAGE MOTION
 ========================= */
 
 $('#prepareMotion').addEventListener('click', () => {
@@ -256,9 +394,7 @@ $('#prepareMotion').addEventListener('click', () => {
       <b>تم تجهيز مشهد التحريك</b>
       <p>${esc(p)}</p>
       <small>الصورة: ${esc(selectedPhoto.name)}</small>
-
       <p class="empty">
-        تم تجهيز الطلب.
         يلزم ربط محرك image-to-video لإنتاج الفيديو.
       </p>
     </div>
@@ -269,7 +405,7 @@ $('#prepareMotion').addEventListener('click', () => {
 
 
 /* =========================
-   مكتبة الأعمال
+   LIBRARY
 ========================= */
 
 function renderLibrary() {
@@ -296,7 +432,7 @@ function renderLibrary() {
 
 
 /* =========================
-   مسح المكتبة
+   CLEAR LIBRARY
 ========================= */
 
 $('#clearLibrary').addEventListener('click', () => {
@@ -313,7 +449,7 @@ $('#clearLibrary').addEventListener('click', () => {
 
 
 /* =========================
-   تثبيت التطبيق
+   INSTALL APPLICATION
 ========================= */
 
 let deferredPrompt;
@@ -326,7 +462,6 @@ window.addEventListener('beforeinstallprompt', e => {
 
   $('#installBtn').hidden = false;
 });
-
 
 $('#installBtn').addEventListener('click', async () => {
 
@@ -346,7 +481,7 @@ $('#installBtn').addEventListener('click', async () => {
 
 
 /* =========================
-   تشغيل Service Worker
+   SERVICE WORKER
 ========================= */
 
 if (

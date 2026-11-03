@@ -43,7 +43,9 @@ function esc(s) {
   }[c]));
 }
 // توليد الصور باستخدام Pollinations
+// AI RSHAD PRO - AI Horde Image Generator
 $('#makeImage')?.addEventListener('click', async () => {
+
   const prompt = $('#imagePrompt')?.value.trim();
 
   if (!prompt) {
@@ -56,66 +58,242 @@ $('#makeImage')?.addEventListener('click', async () => {
   const originalText = btn.textContent;
 
   btn.disabled = true;
-  btn.textContent = 'جارٍ توليد الصورة...';
+  btn.textContent = 'جارٍ إرسال طلب التوليد...';
 
   box.innerHTML =
-    '<div class="empty">جارٍ الاتصال بخدمة الصور، يرجى الانتظار...</div>';
+    '<div class="empty">جارٍ الاتصال بمحرك AI Horde...</div>';
 
   const style = $('#imageStyle')?.value || '';
   const ratio = $('#imageRatio')?.value || '1024x1024';
 
-  const [w, h] = ratio.split('x');
+  const [rw, rh] = ratio.split('x').map(Number);
 
-  const width = Math.min(1536, Math.max(256, parseInt(w) || 1024));
-  const height = Math.min(1536, Math.max(256, parseInt(h) || 1024));
+  const width = Math.min(1024,
+    Math.max(256, Math.round((rw || 1024) / 64) * 64));
+
+  const height = Math.min(1024,
+    Math.max(256, Math.round((rh || 1024) / 64) * 64));
 
   const fullPrompt = [
     prompt,
     style,
-    'high quality, realistic, detailed'
+    'highly detailed, accurate composition, sharp focus'
   ].filter(Boolean).join(', ');
 
-  const params = new URLSearchParams({
-    width: String(width),
-    height: String(height),
-    nologo: 'true',
-    seed: String(Math.floor(Math.random() * 1000000))
-  });
-
-  const url =
-    'https://image.pollinations.ai/prompt/' +
-    encodeURIComponent(fullPrompt) +
-    '?' + params.toString();
-
-  const img = new Image();
-  img.alt = 'الصورة الناتجة';
+  const headers = {
+    'Content-Type': 'application/json',
+    'apikey': '0000000000',
+    'Client-Agent': 'AI-RSHAD-PRO:1.0:github.com/yyazn3799-cmd/AI-RSHAD-PRO'
+  };
 
   let finished = false;
+  let timeout;
 
   function finish() {
     if (finished) return;
+
     finished = true;
     clearTimeout(timeout);
+
     btn.disabled = false;
     btn.textContent = originalText || 'توليد الصورة';
   }
 
-  const timeout = setTimeout(() => {
-    if (finished) return;
-
+  timeout = setTimeout(() => {
     box.innerHTML =
-      '<div class="empty">تأخر توليد الصورة. تحقق من الإنترنت وحاول مجدداً.</div>';
+      '<div class="empty">انتهت مهلة الانتظار. حاول مرة أخرى لاحقاً.</div>';
 
     finish();
-    toast('انتهت مهلة الانتظار.');
-  }, 180000);
+  }, 600000);
 
-  img.onload = () => {
+  try {
+
+    // إرسال طلب التوليد
+
+    const response = await fetch(
+      'https://aihorde.net/api/v2/generate/async',
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+
+          prompt: fullPrompt,
+
+          params: {
+            width,
+            height,
+            steps: 25,
+            cfg_scale: 7,
+            sampler_name: 'k_euler',
+            n: 1
+          },
+
+          nsfw: false,
+          censor_nsfw: true,
+          r2: true,
+          shared: false
+
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('تعذر إرسال طلب التوليد: ' + response.status);
+    }
+
+    const data = await response.json();
+
+    if (!data.id) {
+      throw new Error(data.message || 'لم يتم استلام رقم الطلب.');
+    }
+
+    const requestId = data.id;
+
+    box.innerHTML =
+      '<div class="empty">تم إرسال الطلب بنجاح. جارٍ انتظار دور التوليد...</div>';
+
+    // انتظار الصورة
+
+    let imageUrl = null;
+
+    while (!finished) {
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      if (finished) break;
+
+      const checkResponse = await fetch(
+        'https://aihorde.net/api/v2/generate/check/' + requestId,
+        { headers }
+      );
+
+      if (!checkResponse.ok) {
+        throw new Error('تعذر متابعة حالة التوليد.');
+      }
+
+      const status = await checkResponse.json();
+
+      if (status.faulted) {
+        throw new Error('تعذر توليد الصورة. حاول مجدداً.');
+      }
+
+      if (status.done) {
+
+        const resultResponse = await fetch(
+          'https://aihorde.net/api/v2/generate/status/' + requestId,
+          { headers }
+        );
+
+        if (!resultResponse.ok) {
+          throw new Error('تعذر استلام الصورة الناتجة.');
+        }
+
+        const result = await resultResponse.json();
+
+        imageUrl = result.generations?.[0]?.img;
+
+        break;
+      }
+
+      box.innerHTML =
+        '<div class="empty">جارٍ توليد الصورة... يرجى الانتظار.</div>';
+
+    }
+
     if (finished) return;
 
-    box.innerHTML = '';
+    if (!imageUrl) {
+      throw new Error('لم تصل الصورة من محرك التوليد.');
+    }
 
-    img
+    // عرض الصورة
+
+    const img = new Image();
+
+    img.alt = 'الصورة الناتجة من AI RSHAD PRO';
+
+    img.style.cssText =
+      'width:100%;height:auto;border-radius:14px;display:block;';
+
+    img.onload = () => {
+
+      if (finished) return;
+
+      box.innerHTML = '';
+      box.appendChild(img);
+
+      const saveBtn = document.createElement('button');
+
+      saveBtn.textContent = 'تحميل الصورة';
+
+      saveBtn.addEventListener('click', async () => {
+
+        try {
+
+          const link = document.createElement('a');
+
+          link.href = imageUrl;
+          link.target = '_blank';
+          link.rel = 'noopener';
+
+          link.download = 'AI-RSHAD-PRO.png';
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+        } catch (error) {
+
+          window.open(imageUrl, '_blank');
+
+        }
+
+      });
+
+      box.appendChild(saveBtn);
+
+      if (typeof saveWork === 'function') {
+        saveWork({
+          type: 'صورة مولدة',
+          prompt,
+          details: 'AI Horde'
+        });
+      }
+
+      toast('تم توليد الصورة بنجاح.');
+
+      finish();
+
+    };
+
+    img.onerror = () => {
+
+      box.innerHTML =
+        '<div class="empty">تم التوليد لكن تعذر عرض الصورة. حاول مجدداً.</div>';
+
+      finish();
+
+    };
+
+    img.src = imageUrl;
+
+  } catch (error) {
+
+    console.error('AI Horde Error:', error);
+
+    box.innerHTML =
+      '<div class="empty">' +
+      esc(error.message || 'حدث خطأ أثناء توليد الصورة.') +
+      '</div>';
+
+    toast('تعذر توليد الصورة.');
+
+    finish();
+
+  }
+
+});
+
     // إنشاء طلب فيديو
 $('#makeVideo')?.addEventListener('click', () => {
   const prompt = $('#videoPrompt').value.trim();

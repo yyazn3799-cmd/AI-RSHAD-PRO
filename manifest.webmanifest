@@ -1,19 +1,9 @@
 {
-  "name": "AI RSHAD PRO",
-  "short_name": "RSHAD PRO",
-  "description": "استوديو الصور والفيديو بالذكاء الاصطناعي",
+  "name": "RSHAD AI",
+  "short_name": "RSHAD AI",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0b1020",
-  "theme_color": "#101426",
-  "lang": "ar",
-  "dir": "rtl",
-  "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "background_color": "#0b1220",
+  "theme_color": "#101827",
+  "description": "Discover and compare AI services."
 }

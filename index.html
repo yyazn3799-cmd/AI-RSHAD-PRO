@@ -1,133 +1,143 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#101426">
-  <meta name="description" content="AI RSHAD PRO — استوديو الصور والفيديو والصوت والترجمة">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="RSHAD AI — discover and compare AI services.">
+  <title>RSHAD AI</title>
   <link rel="stylesheet" href="style.css">
-  <title>AI RSHAD PRO</title>
+  <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand"><div class="logo">R</div><div><b>AI RSHAD PRO</b><small>استوديو الإبداع بالذكاء الاصطناعي</small></div></div>
-  <button class="icon-btn" id="installBtn" hidden>＋ تثبيت التطبيق</button>
-</header>
-<main>
-  <section class="hero">
-    <div class="eyebrow">مساحتك الإبداعية الخاصة</div>
-    <h1>حوّل أفكارك إلى <span>صور وصوت ومشاهد</span></h1>
-    <p>استوديو واحد للصور والفيديو والصوت والترجمة. الخدمات الخارجية المجانية قد تفرض حدوداً أو فترات انتظار.</p>
-    <div class="hero-tags"><span>✦ صور</span><span>▶ فيديو</span><span>◈ تحريك الصور</span><span>◎ صوت وتحدث</span><span>文 ترجمة</span></div>
-  </section>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="RSHAD AI home"><span class="brand-mark">R</span><span>RSHAD <b>AI</b></span></a>
+      <button id="changeLanguage" class="lang-mini" type="button">🌐 <span id="currentLang">English</span></button>
+    </header>
 
-  <nav class="tabs" aria-label="الأقسام">
-    <button class="tab active" data-tab="image">▧ الصور</button>
-    <button class="tab" data-tab="video">▶ الفيديو</button>
-    <button class="tab" data-tab="animate">◉ تحريك الصور</button>
-    <button class="tab" data-tab="audio">♫ الصوت والتحدث</button>
-    <button class="tab" data-tab="translate">文 الترجمة</button>
-    <button class="tab" data-tab="library">▤ أعمالي</button>
-  </nav>
+    <main>
+      <section id="languageScreen" class="screen active">
+        <div class="hero compact">
+          <div class="eyebrow">YOUR AI DISCOVERY PLATFORM</div>
+          <h1>RSHAD <span>AI</span></h1>
+          <p id="languagePrompt">Choose your preferred language to continue.</p>
+        </div>
+        <div class="panel">
+          <div id="languageGrid" class="language-grid"></div>
+        </div>
+      </section>
 
-  <section class="workspace">
-    <div class="panel active" id="panel-image">
-      <div class="section-head"><div><h2>استوديو الصور</h2><p>توليد صور عبر AI Horde باستخدام أجهزة متطوعين.</p></div><span class="badge">FREE IMAGE ENGINE</span></div>
-      <label for="imagePrompt">وصف الصورة</label>
-      <textarea id="imagePrompt" rows="4" placeholder="مثال: رجل يحمل باقة كبيرة من الورود الحمراء في شارع أوروبي قديم مرصوف بالحجارة..."></textarea>
-      <div class="grid two">
-        <div><label for="promptLanguage">لغة الوصف</label><select id="promptLanguage"><option value="ar" selected>العربية</option><option value="en">English</option><option value="fr">Français</option><option value="nl">Nederlands</option><option value="es">Español</option><option value="de">Deutsch</option></select></div>
-        <div><label for="imageStyle">النمط</label><select id="imageStyle"><option value="photorealistic">واقعي جداً</option><option value="cinematic">سينمائي</option><option value="anime">أنمي</option><option value="illustration">رسم توضيحي</option><option value="fantasy">خيالي</option></select></div>
-        <div><label for="imageRatio">الأبعاد</label><select id="imageRatio"><option value="1024x1024">مربع 1:1</option><option value="768x1024">عمودي 3:4</option><option value="1024x768">أفقي 4:3</option></select></div>
-        <div><label for="imageSteps">تفاصيل التوليد</label><select id="imageSteps"><option value="25">متوازن (25 خطوة)</option><option value="30">تفاصيل أكثر (30 خطوة)</option><option value="20">أسرع (20 خطوة)</option></select></div>
-      </div>
-      <button class="primary" id="makeImage">✦ توليد الصورة مجاناً</button>
-      <div class="notice">يستخدم هذا القسم AI Horde المجاني المعتمد على أجهزة المتطوعين. الطلبات المجهولة أقل أولوية وقد تنتظر طويلاً، ولا يمكن ضمان توفر عامل توليد في كل وقت. تتم ترجمة الوصف العربي إلى الإنجليزية قبل الإرسال لتحسين فهم النموذج.</div>
-      <div class="result" id="imageResult"><div class="empty">ستظهر الصورة هنا بعد التوليد.</div></div>
-    </div>
+      <section id="welcomeScreen" class="screen">
+        <div class="hero">
+          <div class="eyebrow" data-i18n="eyebrow">DISCOVER. COMPARE. CREATE.</div>
+          <h1 data-i18n="welcomeTitle">Welcome to <span>RSHAD AI</span></h1>
+          <p data-i18n="welcomeText">Your guide to AI tools around the world.</p>
+        </div>
+        <div class="panel intro-panel">
+          <div class="icon-orb">✦</div>
+          <h2 data-i18n="howTitle">A smarter way to find AI services</h2>
+          <p data-i18n="disclaimer">RSHAD AI is an independent intermediary and recommendation platform. We help members discover and compare third-party AI services. The services are provided by their respective companies, not by RSHAD AI.</p>
+          <p class="small-note" data-i18n="affiliateNote">Some recommendations may include partner or referral links. We may earn a commission if you use them, at no extra cost to you. Partner status does not guarantee that a service is the best fit.</p>
+          <button id="toPlans" class="btn primary" data-i18n="continue">Continue</button>
+        </div>
+      </section>
 
-    <div class="panel" id="panel-video">
-      <div class="section-head"><div><h2>استوديو الفيديو</h2><p>إعداد أوصاف الفيديو وتمديده عند ربط محرك متوافق.</p></div><span class="badge">VIDEO STUDIO</span></div>
-      <label for="videoPrompt">وصف الفيديو</label>
-      <textarea id="videoPrompt" rows="4" placeholder="صف المشهد والشخصيات والحركة والكاميرا والإضاءة..."></textarea>
-      <div class="grid two">
-        <div><label for="videoDuration">المدة المطلوبة</label><select id="videoDuration"><option value="5">5 ثوانٍ</option><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option></select></div>
-        <div><label for="videoRatio">اتجاه الفيديو</label><select id="videoRatio"><option>عمودي 9:16</option><option>أفقي 16:9</option><option>مربع 1:1</option></select></div>
-      </div>
-      <button class="primary" id="saveVideoPrompt">حفظ ونسخ وصف الفيديو</button>
-      <div class="result" id="videoResult"><div class="empty">سيظهر هنا وصف الفيديو المحفوظ.</div></div>
-      <div class="notice warning">لا يوجد حالياً محرك فيديو سحابي مجاني وموثوق موصول بهذا المشروع. لن نعرض زر توليد وهمياً: توليد الفيديو وتمديده بالذكاء الاصطناعي يحتاجان مزوّداً يدعم API أو خادماً لتشغيل نموذج مفتوح المصدر. الاستضافة الثابتة على GitHub Pages وحدها لا تشغّل هذه النماذج.</div>
-      <hr>
-      <h3>تمديد فيديو موجود</h3>
-      <label for="extendVideoFile">اختر ملف الفيديو</label>
-      <input id="extendVideoFile" type="file" accept="video/*">
-      <label for="extendPrompt">صف الجزء الجديد الذي تريد إضافته</label>
-      <textarea id="extendPrompt" rows="3" placeholder="مثال: يستمر الرجل بالسير في الشارع ثم تتساقط أوراق الخريف حوله..."></textarea>
-      <button class="secondary" id="prepareExtension">تجهيز طلب التمديد</button>
-      <div class="result" id="extensionResult"><div class="empty">هذه الخطوة تحفظ وصف التمديد فقط؛ لا تنشئ فيديو قبل ربط محرك يدعم الاستمرار.</div></div>
-    </div>
+      <section id="plansScreen" class="screen">
+        <div class="section-heading">
+          <div class="eyebrow" data-i18n="membership">MEMBERSHIP</div>
+          <h1 data-i18n="choosePlan">Choose your plan</h1>
+          <p data-i18n="planSub">Select the membership period that suits you.</p>
+        </div>
+        <div class="plans">
+          <article class="plan-card">
+            <div class="plan-name" data-i18n="weekly">Weekly</div>
+            <div class="price">$3<span data-i18n="perWeek"> / 7 days</span></div>
+            <p data-i18n="weeklyDesc">A short introduction to member recommendations.</p>
+            <button class="btn outline choose-plan" data-plan="weekly" data-i18n="select">Select plan</button>
+          </article>
+          <article class="plan-card featured">
+            <div class="popular" data-i18n="popular">POPULAR</div>
+            <div class="plan-name" data-i18n="monthly">Monthly</div>
+            <div class="price">$9<span data-i18n="perMonth"> / 30 days</span></div>
+            <p data-i18n="monthlyDesc">Explore recommendations throughout the month.</p>
+            <button class="btn primary choose-plan" data-plan="monthly" data-i18n="select">Select plan</button>
+          </article>
+          <article class="plan-card">
+            <div class="plan-name" data-i18n="yearly">Yearly</div>
+            <div class="price">$79<span data-i18n="perYear"> / 365 days</span></div>
+            <p data-i18n="yearlyDesc">Best value for regular AI tool discovery.</p>
+            <button class="btn outline choose-plan" data-plan="yearly" data-i18n="select">Select plan</button>
+          </article>
+        </div>
+        <p class="disclaimer-line" data-i18n="priceNote">Prices are displayed in USD. Confirm that your payment provider accepts the required currency before collecting payments.</p>
+      </section>
 
-    <div class="panel" id="panel-animate">
-      <div class="section-head"><div><h2>تحريك صورة</h2><p>تجهيز صورة ووصف الحركة المطلوبة.</p></div><span class="badge">IMAGE TO VIDEO</span></div>
-      <label for="photoFile">اختر صورة من هاتفك</label>
-      <input id="photoFile" type="file" accept="image/*">
-      <div class="preview" id="photoPreview"><span>معاينة الصورة المختارة</span></div>
-      <label for="motionPrompt">وصف الحركة</label>
-      <textarea id="motionPrompt" rows="3" placeholder="مثال: تتحرك الكاميرا ببطء إلى الأمام، والزهور تتمايل مع نسيم خفيف..."></textarea>
-      <button class="primary" id="prepareMotion">تجهيز وصف تحريك الصورة</button>
-      <div class="notice warning">تحويل الصورة إلى فيديو يحتاج محرك image-to-video. لم نربط محركاً مجانياً ثابتاً بعد، لذلك هذا القسم يجهّز الوصف ولا يدّعي إنشاء فيديو.</div>
-      <div id="motionResult" class="result"><div class="empty">ستظهر تفاصيل مشهد التحريك هنا.</div></div>
-    </div>
+      <section id="paymentScreen" class="screen">
+        <div class="section-heading">
+          <div class="eyebrow" data-i18n="checkout">CHECKOUT</div>
+          <h1 data-i18n="completeMembership">Complete your membership</h1>
+          <p data-i18n="paymentIntro">Follow the instructions below, then submit your payment notification.</p>
+        </div>
+        <div class="panel payment-panel">
+          <div class="selected-plan">
+            <span data-i18n="selectedPlan">Selected plan</span>
+            <strong id="selectedPlanLabel">Monthly — $9</strong>
+          </div>
+          <div class="payment-box">
+            <div class="payment-label" data-i18n="shamCashId">Sham Cash payment identifier</div>
+            <div class="payment-id" dir="ltr" id="paymentIdentifier">53d2865bb42bf1a2c714a5239f7e2aad</div>
+            <button id="copyPaymentId" class="btn outline small-btn" data-i18n="copyId">Copy identifier</button>
+          </div>
+          <div class="warning-box"><strong data-i18n="demoNoticeTitle">Experimental payment flow</strong><p data-i18n="demoNotice">This prototype does not connect to Sham Cash or verify transfers. For testing only, submitting the form below opens the member area immediately. Do not use this flow to collect real payments until server-side payment verification is implemented.</p></div>
+          <form id="paymentForm">
+            <label for="payerReference" data-i18n="transferReference">Transfer reference (optional)</label>
+            <input id="payerReference" name="payerReference" maxlength="80" autocomplete="off" placeholder="e.g. transaction number">
+            <label for="paymentProof" data-i18n="proofLabel">Payment notification / receipt image (optional in demo)</label>
+            <input id="paymentProof" name="paymentProof" type="file" accept="image/*">
+            <button class="btn primary full" type="submit" data-i18n="submitNotice">Submit payment notification</button>
+          </form>
+          <button id="backToPlans" class="text-button" type="button" data-i18n="backPlans">Back to plans</button>
+        </div>
+      </section>
 
-    <div class="panel" id="panel-audio">
-      <div class="section-head"><div><h2>الصوت والتحدث</h2><p>استخدم أصوات الجهاز للتحدث وقراءة النصوص.</p></div><span class="badge">WEB SPEECH</span></div>
-      <label for="speechText">النص المراد قراءته بصوت</label>
-      <textarea id="speechText" rows="4" placeholder="اكتب النص هنا ليقرأه التطبيق..."></textarea>
-      <div class="grid two">
-        <div><label for="speechLanguage">لغة الصوت</label><select id="speechLanguage"><option value="ar">العربية</option><option value="en-US">English</option><option value="nl-NL">Nederlands</option><option value="fr-FR">Français</option><option value="de-DE">Deutsch</option><option value="es-ES">Español</option><option value="tr-TR">Türkçe</option><option value="hi-IN">हिन्दी</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option></select></div>
-        <div><label for="speechRate">سرعة القراءة</label><select id="speechRate"><option value="0.85">بطيئة</option><option value="1" selected>طبيعية</option><option value="1.15">سريعة</option></select></div>
-      </div>
-      <div class="grid two"><button class="primary" id="speakText">▶ قراءة النص</button><button class="secondary" id="stopSpeech">إيقاف الصوت</button></div>
-      <hr>
-      <h3>تحويل الكلام إلى نص</h3>
-      <p class="muted small">قد يتطلب التعرف على الكلام اتصالاً بالإنترنت، ويعتمد توفره على المتصفح والجهاز.</p>
-      <div class="grid two"><button class="primary" id="startDictation">🎙 بدء التحدث</button><button class="secondary" id="stopDictation">إيقاف الاستماع</button></div>
-      <div class="result" id="dictationResult"><div class="empty">سيظهر النص الذي يتعرف عليه المتصفح هنا.</div></div>
-    </div>
-
-    <div class="panel" id="panel-translate">
-      <div class="section-head"><div><h2>الترجمة</h2><p>ترجمة نصية مجانية بحدود استخدام يومية.</p></div><span class="badge">MYMEMORY</span></div>
-      <label for="translateText">النص المراد ترجمته</label>
-      <textarea id="translateText" rows="5" placeholder="اكتب النص الذي تريد ترجمته..."></textarea>
-      <div class="grid two">
-        <div><label for="sourceLang">من</label><select id="sourceLang"><option value="ar" selected>العربية</option><option value="en">الإنجليزية</option><option value="fr">الفرنسية</option><option value="nl">الهولندية</option><option value="de">الألمانية</option><option value="es">الإسبانية</option><option value="it">الإيطالية</option><option value="tr">التركية</option><option value="ru">الروسية</option><option value="zh">الصينية</option><option value="ja">اليابانية</option><option value="pt">البرتغالية</option><option value="hi">الهندية</option></select></div>
-        <div><label for="targetLang">إلى</label><select id="targetLang"><option value="en" selected>الإنجليزية</option><option value="ar">العربية</option><option value="fr">الفرنسية</option><option value="nl">الهولندية</option><option value="de">الألمانية</option><option value="es">الإسبانية</option><option value="it">الإيطالية</option><option value="tr">التركية</option><option value="ru">الروسية</option><option value="zh">الصينية</option><option value="ja">اليابانية</option><option value="pt">البرتغالية</option><option value="hi">الهندية</option></select></div>
-      </div>
-      <button class="primary" id="translateButton">ترجمة النص</button>
-      <div class="result translation-result" id="translationResult"><div class="empty">ستظهر الترجمة هنا.</div></div>
-      <div class="notice">تعتمد الترجمة على MyMemory. الحد المجاني المجهول المعلن هو 5,000 حرف يومياً، وقد تختلف التغطية والجودة باختلاف اللغة. لا تضع معلومات سرية في النصوص المرسلة لخدمة خارجية.</div>
-    </div>
-
-    <div class="panel" id="panel-library">
-      <div class="section-head"><div><h2>مكتبتي</h2><p>سجل الطلبات المحفوظ على هذا الجهاز.</p></div><span class="badge">MY WORK</span></div>
-      <div id="libraryList" class="library-list"><div class="empty">لم تحفظ أي أعمال بعد.</div></div>
-      <button class="secondary" id="clearLibrary">مسح سجل الطلبات</button>
-    </div>
-  </section>
-
-  <section class="features">
-    <h2>حالة المحركات</h2>
-    <div class="feature-grid">
-      <article><b>01 · الصور</b><h3>AI Horde</h3><p>متصل من الواجهة؛ مجاني عبر أجهزة متطوعين مع طابور انتظار وأولوية منخفضة للمجهول.</p></article>
-      <article><b>02 · الصوت</b><h3>أدوات المتصفح</h3><p>قراءة النص مدعومة غالباً. التعرف على الكلام يختلف حسب المتصفح والجهاز واللغة.</p></article>
-      <article><b>03 · الترجمة</b><h3>MyMemory</h3><p>ترجمة مجانية بحد يومي؛ الخدمة الخارجية قد تضع قيوداً أو تتوقف مؤقتاً.</p></article>
-    </div>
-  </section>
-</main>
-<footer>AI RSHAD PRO <span>نسخة مطوّرة تجريبية · خدمات مجانية بحدود معلنة</span></footer>
-<div class="toast" id="toast" role="status"></div>
-<script src="app.js"></script>
+      <section id="memberScreen" class="screen">
+        <div class="member-hero">
+          <div class="eyebrow" data-i18n="memberArea">MEMBER AREA</div>
+          <h1 data-i18n="memberWelcome">Welcome, member</h1>
+          <p data-i18n="memberPrompt">What would you like to do today?</p>
+          <div class="demo-badge" data-i18n="demoMembership">DEMO MEMBERSHIP — NOT PAYMENT VERIFIED</div>
+        </div>
+        <div class="section-heading left">
+          <h2 data-i18n="chooseService">Choose a service</h2>
+          <p data-i18n="serviceSub">Select what you want to achieve. We’ll suggest suitable tools.</p>
+        </div>
+        <div id="serviceGrid" class="service-grid">
+          <button class="service-card" data-service="images"><span>🖼️</span><b data-i18n="images">AI images</b><small data-i18n="imagesDesc">Generate and edit images</small></button>
+          <button class="service-card" data-service="video"><span>🎬</span><b data-i18n="video">AI video</b><small data-i18n="videoDesc">Create and edit videos</small></button>
+          <button class="service-card" data-service="audio"><span>🎙️</span><b data-i18n="audio">AI audio</b><small data-i18n="audioDesc">Voice, speech and sound</small></button>
+          <button class="service-card" data-service="writing"><span>✍️</span><b data-i18n="writing">Writing</b><small data-i18n="writingDesc">Text, ideas and marketing</small></button>
+          <button class="service-card" data-service="music"><span>🎵</span><b data-i18n="music">AI music</b><small data-i18n="musicDesc">Create music and songs</small></button>
+          <button class="service-card" data-service="coding"><span>💻</span><b data-i18n="coding">Coding</b><small data-i18n="codingDesc">Build and develop software</small></button>
+          <button class="service-card" data-service="translation"><span>🌐</span><b data-i18n="translation">Translation</b><small data-i18n="translationDesc">Translate text and media</small></button>
+          <button class="service-card" data-service="assistants"><span>🤖</span><b data-i18n="assistants">AI assistants</b><small data-i18n="assistantsDesc">Research and productivity</small></button>
+        </div>
+        <div id="recommendationPanel" class="panel recommendation-panel hidden">
+          <div class="recommendation-top">
+            <div><div class="eyebrow" data-i18n="recommendations">RECOMMENDATIONS</div><h2 id="recommendationTitle"></h2></div>
+            <button id="closeRecommendations" class="close-btn" aria-label="Close">×</button>
+          </div>
+          <p class="small-note" data-i18n="recommendationDisclaimer">These are sample directory entries for the prototype, not live rankings or verified endorsements. Partner links must be added only after a real agreement.</p>
+          <div id="recommendationList"></div>
+        </div>
+        <footer class="member-footer">
+          <button id="restartDemo" class="text-button" data-i18n="restart">Restart demo</button>
+          <span data-i18n="footerText">RSHAD AI is an independent discovery platform.</span>
+        </footer>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>
